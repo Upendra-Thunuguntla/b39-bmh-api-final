@@ -134,7 +134,7 @@ var value = " seats booked"
 		<scheduler doc:name="Scheduler"
 			doc:id="7fc22e05-3ac5-48df-b808-2528444cb859">
 			<scheduling-strategy>
-				<fixed-frequency frequency="2" timeUnit="MINUTES" />
+				<fixed-frequency frequency="1" timeUnit="HOURS" />
 			</scheduling-strategy>
 		</scheduler>
 		<db:select doc:name="Select cab details"
