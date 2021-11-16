@@ -1,0 +1,20 @@
+db:
+  server: "remotemysql.com"
+  user: "AegnI4rjxH"
+  key: "sj3d8QQCGl"
+  port : "3306"
+  
+http:
+  port: "8081"
+
+indigo:
+  host: "b39-indigo-flights-api.us-e2.cloudhub.io"
+  port: "80"
+  protocol: "HTTP"
+  basepath: "/api"
+  
+userapi:
+  host: "b39-bmh-db-systemapi.us-e2.cloudhub.io"
+  port: "80"
+  protocol: "HTTP"
+  basepath: "/api"

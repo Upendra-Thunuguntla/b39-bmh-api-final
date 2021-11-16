@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:b39-bmh-db-system="http://www.mulesoft.org/schema/mule/b39-bmh-db-system"
+	xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:book-my-holiday="http://www.mulesoft.org/schema/mule/book-my-holiday"
+	xmlns:indigo-flights-api="http://www.mulesoft.org/schema/mule/indigo-flights-api"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/indigo-flights-api http://www.mulesoft.org/schema/mule/indigo-flights-api/current/mule-indigo-flights-api.xsd
+http://www.mulesoft.org/schema/mule/book-my-holiday http://www.mulesoft.org/schema/mule/book-my-holiday/current/mule-book-my-holiday.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/b39-bmh-db-system http://www.mulesoft.org/schema/mule/b39-bmh-db-system/current/mule-b39-bmh-db-system.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<configuration-properties
+		doc:name="Configuration properties"
+		doc:id="0fb00060-0cb5-4d19-9b92-3b117cb49ae4" file="config.yaml" />
+	<http:listener-config name="HTTP_Listener_8081"
+		doc:name="HTTP Listener config"
+		doc:id="f4762de4-6594-49d6-81ad-33999b150f85">
+		<http:listener-connection host="0.0.0.0"
+			port="${http.port}" />
+	</http:listener-config>
+	<db:config name="DB_Config" doc:name="Database Config"
+		doc:id="b6853bb4-0f21-4a7e-bf33-0ce28d28e777">
+		<db:my-sql-connection host="${db.server}"
+			port="${db.port}" user="${db.user}" password="${db.key}"
+			database="${db.user}" />
+	</db:config>
+	<book-my-holiday:config name="Book_my_holiday_Config" doc:name="Book-my-holiday Config" doc:id="3bb784a0-9a8e-4610-99cc-749d43b0afee" property_host="${indigo.host}" property_port="${indigo.port}" property_protocol="${indigo.protocol}" property_basePath="${indigo.basepath}" />
+	<wsc:config name="tajHotel_WS_Consumer_Conf" doc:name="Web Service Consumer Config" doc:id="403e8bb6-77a4-418b-9c94-f8ec5382b2a1" >
+		<wsc:connection wsdlLocation="http://b39-taj-hotels-soap-api.us-e2.cloudhub.io/HotelBookingService/HotelsServicePort?wsdl" service="HotelBookingService" port="HotelsServicePort" address="http://b39-taj-hotels-soap-api.us-e2.cloudhub.io/HotelBookingService/HotelsServicePort" >
+			<wsc:web-service-security actor="http://schemas.xmlsoap.org/soap/actor/next" />
+		</wsc:connection>
+	</wsc:config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="7bd14bd9-0bf3-4d49-a0b6-9190c42ad9ed" />
+	<b39-bmh-db-system:config name="B39_BMH_DB_System_Config" doc:name="B39-BMH-DB-System Config" doc:id="af322dc0-1d47-4391-84d6-e3d6ddcf49c2" property_host="${userapi.host}" property_port="${userapi.port}" property_protocol="${userapi.protocol}" property_basePath="${userapi.basepath}" />
+	<configuration doc:name="Configuration" doc:id="494032ca-194c-4206-a948-9b65c16a9deb" defaultErrorHandler-ref="globalError_Handler" />
+	<error-handler name="globalError_Handler" doc:id="304b910b-00f9-4de4-ba04-947be3739e4c" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="e70717d6-b0f8-4895-a887-898c1295afbe" >
+			<ee:transform doc:name="Transform Message" doc:id="38d7b46f-04e0-42ab-9cd4-3d5a47ea31af" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message : "Some Internal error occured"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+</mule>

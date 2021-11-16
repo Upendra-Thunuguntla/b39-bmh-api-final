@@ -1,0 +1,5 @@
+[
+  {
+    "isBooked": false
+  }
+]

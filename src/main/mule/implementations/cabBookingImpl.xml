@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<flow name="getAllCabs"
+		doc:id="197163b3-9ae6-4511-9886-96556e25aceb">
+		<db:select doc:name="fetch all cabs"
+			doc:id="04148f2a-2159-479d-9f31-f48026323284" config-ref="DB_Config">
+			<db:sql><![CDATA[Select * from CabDetails]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="array to json"
+			doc:id="a4f1039b-3722-463d-b099-8275718d2603">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="ac3fb0b6-5ff5-40df-8d28-72fa5439cdc0" message="#[payload]" />
+	</flow>
+	<flow name="getCabsByParams"
+		doc:id="5e7c1056-0350-46cf-8385-e04a2b82a433">
+		<set-variable value="#[attributes.queryParams.location]"
+			doc:name="location" doc:id="e09e258f-547d-49c3-8810-3e4438683324"
+			variableName="location" />
+		<validation:is-true doc:name="Is valid location"
+			doc:id="5ff07d61-db96-4796-ada7-cb642902265e"
+			expression="#[['Banglore','Yeswanthpur'] contains vars.location]"
+			message='#["Location is not valid"]' />
+		<db:select doc:name="Select cabs with params"
+			doc:id="d34b3e81-2dd3-4e1b-a435-4836e022f1a6" config-ref="DB_Config">
+			<db:sql><![CDATA[Select * from CabDetails where ServingLocation = :location]]></db:sql>
+			<db:input-parameters><![CDATA[#[{ location: vars.location }]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="array to json"
+			doc:id="49b6c62d-0c85-40a1-9c78-2781d32fbc98">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="e1fb31a4-112e-4020-9a24-6424b3fd2d62" message="#[payload]" />
+		<error-handler>
+			<on-error-continue enableNotifications="true"
+				logException="true" doc:name="On Error Continue"
+				doc:id="622c0a8f-eeea-4827-a1fb-122a2b2b89af"
+				type="VALIDATION:INVALID_BOOLEAN">
+				<set-payload
+					value="#[error.errorMessage.payload.message]"
+					doc:name="Set Payload"
+					doc:id="662d4582-cd2a-41b8-b849-11184833d7af" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="bookCab" doc:id="0a6549a9-0720-4d3c-abb1-a9c284995581">
+		<set-variable
+			value="#[payload.cabID as Number]" doc:name="cabId"
+			doc:id="2cfd5655-7995-4c92-a2dd-3c108f108325" variableName="cabId" />
+		<db:select doc:name="validate booking status"
+			doc:id="11a2db8b-cb59-4918-b816-1730bbe3a036" config-ref="DB_Config">
+			<db:sql><![CDATA[select isBooked from CabDetails where CabID = :id]]></db:sql>
+			<db:input-parameters><![CDATA[#[{id : vars.cabId as Number}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="array to json"
+			doc:id="a6142075-16dc-42b2-9fce-0046e4f8a2e5">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="18a69ebe-90a3-466e-bf59-b6e7780a2410" message="#[payload]" />
+		<choice doc:name="Choice"
+			doc:id="eae10851-6654-4e3f-826f-36cd6e37337f">
+			<when expression="#[payload[0].isBooked==true]">
+				<ee:transform doc:name="validation fail message"
+					doc:id="9363b836-3f8f-4334-897b-284bc4c945da">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message" : "Sorry for inconvenience but the cab with Cab ID " ++ vars.cabId as String ++ " is already booked"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise>
+				<db:update doc:name="Update booking status"
+					doc:id="f57ec95e-18d6-420e-900f-ea254337e750"
+					config-ref="DB_Config">
+					<db:sql><![CDATA[update CabDetails set isBooked = 1 where cabID = :id]]></db:sql>
+					<db:input-parameters><![CDATA[#[{id: vars.cabId as Number}]]]></db:input-parameters>
+				</db:update>
+				<db:insert doc:name="Insert booking details"
+					doc:id="c55d7621-9684-4f65-b525-c047c0aad7ab"
+					config-ref="DB_Config">
+					<db:sql><![CDATA[insert into BookingDetails (CustomerID, isFlight, isHotel, isCab, FlightID, HotelID, CabID) values (null,0,0,1,null,null,:id)]]></db:sql>
+					<db:input-parameters><![CDATA[#[{ id : vars.cabId as Number}]]]></db:input-parameters>
+				</db:insert>
+				<ee:transform doc:name="success message"
+					doc:id="c37d4ed4-dd6a-4e49-b3ec-68f76ae2030d">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var key = "CabID " ++ vars.cabId as String
+var value = " seats booked"
+---
+{
+	message : key ++ " Successfully Booked",
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="consolidatingData"
+		doc:id="b505b674-bdf0-4145-8a2c-a027218c2ec7">
+		<scheduler doc:name="Scheduler"
+			doc:id="7fc22e05-3ac5-48df-b808-2528444cb859">
+			<scheduling-strategy>
+				<fixed-frequency frequency="2" timeUnit="MINUTES" />
+			</scheduling-strategy>
+		</scheduler>
+		<db:select doc:name="Select cab details"
+			doc:id="c63feb55-9d6f-4c34-8ff5-ea4ae9d70b66" config-ref="DB_Config">
+			<db:sql><![CDATA[Select * from CabDetails where isBooked = 1]]></db:sql>
+		</db:select>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="67b4ba25-4e97-4508-8f5d-affcd66b2f9c" message="#[payload]" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="3e912687-c3e3-46f5-9e3f-b710f8accab1" >
+			<route >
+				<ee:transform doc:name="Filter ola cab bookings" doc:id="a2a79ffa-aba9-4e61-99f8-bed38f787eef">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/csv
+---
+payload filter ($.ProviderName == 'Ola')
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<file:write doc:name="write to Ola csv" doc:id="88ef8d17-c7db-4a72-a680-eedefd52c61e" config-ref="File_Config" path='#["Documents/CabBooking/Ola/Bookings_" ++ now() as String {format: "y-MM-dd_hh_m_s"} ++".csv"]'>
+				</file:write>
+			</route>
+			<route >
+				<ee:transform doc:name="filter Meru Cab bookings" doc:id="453e4c97-559e-454b-8d82-b0102182e9cd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/csv
+---
+payload filter ($.ProviderName == 'Meru')
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<file:write doc:name="write to Meru csv" doc:id="ec9a5a3a-758d-474d-9a3f-3d0316bd3e9f" config-ref="File_Config" path='#["Documents/CabBooking/Meru/Bookings_" ++ now() as String {format: "y-MM-dd_hh_m_s"} ++".csv"]' />
+			</route>
+		</scatter-gather>
+	
+</flow>
+	
+	
+</mule>

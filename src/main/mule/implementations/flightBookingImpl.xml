@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns:book-my-holiday="http://www.mulesoft.org/schema/mule/book-my-holiday"
+	xmlns:indigo-flights-api="http://www.mulesoft.org/schema/mule/indigo-flights-api"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/indigo-flights-api http://www.mulesoft.org/schema/mule/indigo-flights-api/current/mule-indigo-flights-api.xsd
+http://www.mulesoft.org/schema/mule/book-my-holiday http://www.mulesoft.org/schema/mule/book-my-holiday/current/mule-book-my-holiday.xsd">
+		<flow name="getAllFlights"
+		doc:id="8df95db8-9034-4859-95f7-2c5939b3e10c">
+		<book-my-holiday:get-get-all-flights
+			doc:name="Get get all flights"
+			doc:id="e682213b-e451-4057-b472-a10e7e4f724d"
+			config-ref="Book_my_holiday_Config" />
+	</flow>
+	<flow name="findFlights"
+		doc:id="ddcfc64e-874d-40e5-a7fa-a0ca37a9bba3">
+		<book-my-holiday:get-find-flights
+			doc:name="Get find flights"
+			doc:id="0f1faeff-f90c-4547-8b62-69b904d5e8f7"
+			config-ref="Book_my_holiday_Config"
+			source="#[attributes.queryParams.source]"
+			destination="#[attributes.queryParams.destination]"
+			departure-date="#[attributes.queryParams.departureDate]" />
+	</flow>
+	<flow name="bookFlight"
+		doc:id="68daa8d1-11f0-421d-91e4-e00d1de5d61d">
+		<book-my-holiday:create-book-flight
+			doc:name="Create book flight"
+			doc:id="6f3fe8b9-f62a-4118-8182-9ef7f36bc390"
+			config-ref="Book_my_holiday_Config" />
+	</flow>
+</mule>

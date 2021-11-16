@@ -1,0 +1,152 @@
+#%RAML 1.0
+title: Indigo Flights API
+
+types:
+  indigoFlight: !include /datatype/flightDataType.raml
+  cab: !include /datatype/cabDataType.raml
+  hotel: !include /datatype/hotelDataType.raml
+
+traits: 
+  errorResponsesLib:
+    responses:
+      400:
+        body:
+          application/json:
+            example: !include ../errorResponses/400.json    
+      404:
+        body:
+          application/json:
+            example: !include ../errorResponses/404.json
+      401:
+        body:
+          application/json:
+            example: !include ../errorResponses/401.json
+      500:
+        body:
+          application/json:
+            example: !include ../errorResponses/500.json
+
+/flights:
+  /getAllFlights:
+    is: [errorResponsesLib]
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: indigoFlight[]
+              examples:
+                output: !include /examples/getFlightExamples.raml
+
+  /findFlights:
+    is: [errorResponsesLib]
+    get:
+      queryParameters:
+        source:
+          required: true
+          type: string
+        destination:
+          required: true
+          type: string
+        departureDate:
+          required: false
+          type: date-only
+      responses:
+        200:
+          body:
+            application/json:
+              type: indigoFlight[]
+              examples:
+                output: !include /examples/getFlightExample.raml
+  /bookFlights:
+    is: [errorResponsesLib]
+    post:
+      body:
+        application/json:
+          example: !include /examples/bookFlight.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: Flight Booked Successfully !!!
+/cabs:
+  /getAllCabs:
+    is: [errorResponsesLib]
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: cab[]
+              examples:
+                output: !include /examples/getCabExamples.raml
+
+  /findCabs:
+    is: [errorResponsesLib]
+    get:
+      queryParameters:
+        location:
+          required: true
+          type: string
+      responses:
+        200:
+          body:
+            application/json:
+              type: cab[]
+              examples:
+                output: !include /examples/getCabExample.raml
+  /bookCabs:
+    is: [errorResponsesLib]
+    post:
+      body:
+        application/json:
+          example:
+            cabID: 2
+            username: demo
+            password: password
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: Cab Booked Successfully !!!
+
+/hotels:
+    
+  /getAllHotels:
+    is: [errorResponsesLib]
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: hotel[]
+              example: !include /examples/getHotelsExample.raml
+  /findHotels:
+    is: [errorResponsesLib]
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type : hotel[]
+              example: !include /examples/findHotelsExample.raml
+
+  /bookHotel:
+    is: [errorResponsesLib]
+    post:
+      body:
+        application/json:
+          example: !include /examples/BookHotelRequest.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message : Hotel Booked Successfully !!!
+          
+      
+                
+            
+

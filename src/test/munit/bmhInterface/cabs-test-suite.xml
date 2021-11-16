@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="cabs-test-suite.xml" />
+	<munit:test name="get:cabs\findCabs-positiveScenerio" doc:id="09ef32ed-4327-47a6-b260-76afb68ba0c6" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="7b732e55-f722-4e03-a700-2c1628f67ea3" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="6e29d703-7d51-4997-8a68-92962c96a4d9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://getcabsfindCabspositiveScenerio\mock_payload.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getcabsfindCabspositiveScenerio\mock_variable_.dwl')]" />
+						<munit-tools:variable key="location" value="#[output application/java --- readUrl('classpath://getcabsfindCabspositiveScenerio\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="104ff835-4038-4af7-a81c-98d2ea6cce60" >
+				<munit:payload value="#[readUrl('classpath://getcabsfindCabspositiveScenerio\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getcabsfindCabspositiveScenerio\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getcabsfindCabspositiveScenerio\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\cabs\findCabs:b39-book-my-holiday-api-config" doc:id="e4886c47-67b4-45c7-b2f1-d50e3c45801d" name="get:\cabs\findCabs:b39-book-my-holiday-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="df5adc97-1886-41e8-b84a-7983af4fd817" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getcabsfindCabspositiveScenerio::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:cabs\getAllCabs" doc:id="63a42cd0-1601-4953-acd1-a21684463ec3" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="1ab87aca-30ca-45c1-ae1e-aa7d909f37d9" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="13ff87eb-6d36-4f09-a4b5-4d0a71c8438d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://getcabsgetAllCabs\mock_payload.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getcabsgetAllCabs\mock_variable_.dwl')]" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="d6ccfd20-7863-41a7-a2cf-29d453c4f630" >
+				<munit:payload value="#[readUrl('classpath://getcabsgetAllCabs\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getcabsgetAllCabs\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getcabsgetAllCabs\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\cabs\getAllCabs:b39-book-my-holiday-api-config" doc:id="229e1a25-075e-4f5a-ab8b-5992bd9cd064" name="get:\cabs\getAllCabs:b39-book-my-holiday-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="c3cd23c6-b2e3-44c2-b1f5-c05473c5eed0" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getcabsgetAllCabs::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+
+</mule>

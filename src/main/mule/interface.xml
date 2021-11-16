@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+	xmlns:b39-bmh-db-system="http://www.mulesoft.org/schema/mule/b39-bmh-db-system"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/b39-bmh-db-system http://www.mulesoft.org/schema/mule/b39-bmh-db-system/current/mule-b39-bmh-db-system.xsd">
+	<apikit:config name="b39-book-my-holiday-api-config"
+		api="resource::d73e4f65-f7d5-409d-a7da-fe542c66fbb7:b39-book-my-holiday-api:1.0.2:raml:zip:b39-book-my-holiday-api.raml"
+		outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus" />
+	<flow name="b39-book-my-holiday-api-main">
+		<http:listener config-ref="HTTP_Listener_8081"
+			path="/api/*">
+			<http:response
+				statusCode="#[vars.httpStatus default 200]">
+				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
+			</http:response>
+			<http:error-response
+				statusCode="#[vars.httpStatus default 500]">
+				<http:body>#[payload]</http:body>
+				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
+			</http:error-response>
+		</http:listener>
+		<apikit:router config-ref="b39-book-my-holiday-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="b39-book-my-holiday-api-console">
+        <http:listener config-ref="HTTP_Listener_8081" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="b39-book-my-holiday-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\cabs\findCabs:b39-book-my-holiday-api-config" doc:id="3f841e0c-c6b6-4fff-a758-41a0595a1088">
+		<flow-ref doc:name="Flow Reference" doc:id="6e29d703-7d51-4997-8a68-92962c96a4d9" name="getCabsByParams"/>
+    </flow>
+    <flow name="get:\flights\findFlights:b39-book-my-holiday-api-config">
+		<flow-ref doc:name="Flow Reference" doc:id="23601c10-8a7e-4cef-92b0-4711662393a9" name="findFlights"/>
+    </flow>
+    <flow name="get:\hotels\findHotels:b39-book-my-holiday-api-config">
+		<flow-ref doc:name="Flow Reference" doc:id="000c36dc-8b8b-4377-bf0f-5e69ad2ccc86" name="findHotelsFlow"/>
+    </flow>
+    <flow name="get:\cabs\getAllCabs:b39-book-my-holiday-api-config">
+		<flow-ref doc:name="Flow Reference" doc:id="13ff87eb-6d36-4f09-a4b5-4d0a71c8438d" name="getAllCabs"/>
+    </flow>
+    <flow name="get:\flights\getAllFlights:b39-book-my-holiday-api-config" doc:id="5ea5e90d-31c3-4c0a-8b44-2e472d0c931e">
+		<flow-ref doc:name="Flow Reference" doc:id="77f8a2c1-0667-4a66-82f8-a4b64ebd27fd" name="getAllFlights"/>
+    </flow>
+    <flow name="get:\hotels\getAllHotels:b39-book-my-holiday-api-config">
+		<flow-ref doc:name="Flow Reference" doc:id="5b2f2af1-16f3-480b-b390-692113b38111" name="getAllHotelsFlow"/>
+    </flow>
+    <flow name="post:\cabs\bookCabs:application\json:b39-book-my-holiday-api-config">
+		<b39-bmh-db-system:get-by-mobile doc:name="Get by mobile" doc:id="5c8ac749-4e0d-4947-ac85-835920b146ca" config-ref="B39_BMH_DB_System_Config" password="#[payload.password]" mobile="#[payload.username]" target="user"/>
+		<flow-ref doc:name="Flow Reference" doc:id="556ab374-09b5-4741-a2f5-de3337d998e7" name="bookCab" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d9b712d7-0e06-4c68-9a36-f89770848704" type="B39-BMH-DB-SYSTEM:UNAUTHORIZED">
+				<ee:transform doc:name="unauthorised" doc:id="4c86aab8-9676-4775-b67a-b4158e3c99dc" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message : "Wrong Password"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0bd0e6a8-01b7-45e0-a2f4-c80a10b4e91f" type="B39-BMH-DB-SYSTEM:INTERNAL_SERVER_ERROR">
+				<ee:transform doc:name="internal error" doc:id="20ba2fa4-e9d2-4716-9eb2-87ac5864e394" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message : "User not found in our records. Please check again"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+    </flow>
+    <flow name="post:\flights\bookFlights:application\json:b39-book-my-holiday-api-config">
+    <b39-bmh-db-system:get-by-mobile doc:name="Get by mobile" doc:id="4f0252cf-eb0a-4179-9347-2c8bb4c53ad7" config-ref="B39_BMH_DB_System_Config" password="#[payload.password]" mobile="#[payload.username]" target="user"/>
+		<flow-ref doc:name="Flow Reference" doc:id="84358305-9640-465f-9c12-d132210f7e2a" name="bookFlight"/>
+<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="586abccd-bb74-4fa7-ba6e-e5b28ea7976e" type="B39-BMH-DB-SYSTEM:UNAUTHORIZED">
+				<ee:transform doc:name="unauthorised" doc:id="3ab0c3b3-f1cc-45cd-8ea2-4e9dc39d9318" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message : "Wrong Password"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0d665144-e0e8-4b8c-8bfc-59ab38cb3317" type="B39-BMH-DB-SYSTEM:INTERNAL_SERVER_ERROR">
+				<ee:transform doc:name="internal error" doc:id="81c1a59a-dc4a-481f-ada5-ec0e5762f90e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message : "User not found in our records. Please check again"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+
+	</flow>
+    <flow name="post:\hotels\bookHotel:application\json:b39-book-my-holiday-api-config">
+    <b39-bmh-db-system:get-by-mobile doc:name="Get by mobile" doc:id="fe359b26-f8da-479e-b415-bf98ffd2590d" config-ref="B39_BMH_DB_System_Config" password="#[payload.password]" mobile="#[payload.username]" target="user"/>
+		<flow-ref doc:name="Flow Reference" doc:id="1982a50e-ce61-4f1f-b8a3-e920308d050e" name="bookHotelFlow"/>
+<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0c33e29b-f41c-447a-81df-71b8a48b31a0" type="B39-BMH-DB-SYSTEM:UNAUTHORIZED">
+				<ee:transform doc:name="unauthorised" doc:id="88f6c04c-a74b-43db-bd4f-34ac20069aff" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message : "Wrong Password"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a170391c-9fe0-43f4-862b-22b407e07e1c" type="B39-BMH-DB-SYSTEM:INTERNAL_SERVER_ERROR">
+				<ee:transform doc:name="internal server error" doc:id="55580cc8-d95c-4d8c-afa0-083430852ffb" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message : "User not found in our records. Please check again"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+
+	</flow>
+</mule>

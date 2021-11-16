@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getAllHotelsFlow"
+		doc:id="5e144225-10ee-4cef-acae-ed170d0acb60">
+		<http:listener doc:name="Listener"
+			doc:id="4c902ae8-ab34-4744-a947-f17d7930c3d2"
+			config-ref="HTTP_Listener_8081" path="/listAllHotels" />
+		<wsc:consume operation="listAllHotels"
+			doc:name="Call taj-ws" doc:id="533255cb-c068-46c7-91c0-72966c8772cd"
+			config-ref="tajHotel_WS_Consumer_Conf" />
+		<ee:transform doc:name="XML to JSON"
+			doc:id="32d35258-421a-4fc6-9c1e-d8502f3f339f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://localhost:8081/
+---
+payload.body.hotels.*hotel map ( hotel , indexOfHotel ) -> {
+	HotelID: hotel.HotelID as String default "",
+	HotelName: hotel.HotelName default "",
+	HotelType: hotel.HotelType default "",
+	EmptyRooms: hotel.EmptyRooms as String default "",
+	RoomPrice: hotel.RoomPrice as String default "",
+	City: hotel.City default "",
+	CityCode: hotel.CityCode default "",
+	State: hotel.State default "",
+	Pincode: hotel.Pincode as String default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b11c2e6f-c764-4e49-b5ae-a1da682afa5b" message="#[payload]"/>
+	</flow>
+	<flow name="findHotelsFlow"
+		doc:id="433f023f-4304-4fe0-80b1-71a8050eba69">
+		<http:listener doc:name="Listener"
+			doc:id="5e9a6d0d-f206-426b-afbd-a5be1be49807"
+			config-ref="HTTP_Listener_8081" path="/findHotel" />
+		<wsc:consume operation="findHotel" doc:name="Call taj-ws"
+			doc:id="3a28998b-d094-422d-922b-aaad7fb0f331"
+			config-ref="tajHotel_WS_Consumer_Conf">
+			<wsc:message>
+				<wsc:body><![CDATA[#[output application/xml
+---
+{
+	findHotel : {
+		city : attributes.queryParams.city
+	}
+}]]]></wsc:body>
+			</wsc:message>
+		</wsc:consume>
+		<ee:transform doc:name="XML to JSON"
+			doc:id="aeba36bc-8b2c-496e-8fd9-dbe8630c98e4">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://localhost:8081/
+---
+payload.body.hotels.*hotel map ( hotel , indexOfHotel ) -> {
+	HotelID: hotel.HotelID as String default "",
+	HotelName: hotel.HotelName default "",
+	HotelType: hotel.HotelType default "",
+	EmptyRooms: hotel.EmptyRooms as String default "",
+	RoomPrice: hotel.RoomPrice as String default "",
+	City: hotel.City default "",
+	CityCode: hotel.CityCode default "",
+	State: hotel.State default "",
+	Pincode: hotel.Pincode as String default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="66591532-293e-4b49-8b28-17f150b0e20a" message="#[payload]" />
+	</flow>
+	<flow name="bookHotelFlow"
+		doc:id="e3ff6f94-2c38-493d-9392-3c1d0742c7a7">
+		<http:listener doc:name="Listener"
+			doc:id="a7d506c8-ffd4-4498-b3ae-8817d188df33"
+			config-ref="HTTP_Listener_8081" path="/bookHotel" allowedMethods="POST"/>
+		<wsc:consume operation="bookHotel"
+			doc:name="Call taj-ws" doc:id="9b62d4da-6ba3-4235-a76f-f4e2cbaa00b6"
+			config-ref="tajHotel_WS_Consumer_Conf" >
+			<wsc:message >
+				<wsc:body ><![CDATA[#[output application/xml
+---
+{
+	bookHotel : {
+		HotelID : payload.hotelID,
+		RoomCount : payload.roomCount
+	}
+}]]]></wsc:body>
+			</wsc:message>
+		</wsc:consume>
+		<ee:transform doc:name="XML to JSON"
+			doc:id="8b4de66f-d0e7-4d6c-8ac2-742477e93db7">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+
+payload.body
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="6b108030-78cf-4b68-85fe-29b80f1d371e" message="#[payload]"/>
+	
+</flow>
+</mule>

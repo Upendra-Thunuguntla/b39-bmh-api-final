@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_79de5724_9689_4cb0_afb3_ce24cd305505_Output_Payload = Array<{  ProviderName: String,   CabID?: Number,   CabNumber: String,   DriverName: String,   CabType: String,   isBooked: Boolean,   ServingLocation: String,   _?: Any}>
+

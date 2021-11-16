@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="post-bookHotels.xml"/>
+	<munit:test
+		name="post\hotels\bookHotel-unauthorised"
+		doc:id="48815332-8f10-4e0d-906b-c687e8d2c1c3" description="Test">
+		<munit:behavior >
+			<munit:set-event doc:name="Set Event" doc:id="3ab2f23d-7c81-450d-9868-3cdfec5fb09d" >
+				<munit:payload value='{&#10;    "username" : "8121134970",&#10;    "password" : "Apisero@12",&#10;    "hotelID" : "1",&#10;    "roomsToBook" : "3"&#10;}' encoding="UTF-8" mediaType="application/json" />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="a3dfcabe-df1b-493b-b1d0-95d99678447e" processor="b39-bmh-db-system:get-by-mobile">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Get by mobile" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="fe359b26-f8da-479e-b415-bf98ffd2590d" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="B39_BMH_DB_System_Config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="#[payload.password]" attributeName="password" />
+					<munit-tools:with-attribute whereValue="#[payload.username]" attributeName="mobile" />
+					<munit-tools:with-attribute whereValue="user" attributeName="target" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="B39-BMH-DB-SYSTEM:UNAUTHORIZED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref
+				doc:name="Flow-ref to post:\hotels\bookHotel:application\json:b39-book-my-holiday-api-config"
+				doc:id="570c82a4-a64e-4991-8d11-1f63d08f45ad"
+				name="post:\hotels\bookHotel:application\json:b39-book-my-holiday-api-config" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="6275d3ce-b800-436a-91b5-ba82a8cd5340" processor="ee:transform" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="unauthorised" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="88f6c04c-a74b-43db-bd4f-34ac20069aff" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	
+</munit:test>
+
+<munit:test
+		name="post\hotels\bookHotel-internal-server-error"
+		doc:id="206f7acc-b584-4885-a4b9-507ca322418f" description="Test">
+		<munit:behavior >
+			<munit:set-event doc:name="Set Event" doc:id="780c7178-3f3a-434c-af00-aa246fad9ac5" >
+				<munit:payload value='{&#10;    "username" : "8121134971",&#10;    "password" : "Apisero@123",&#10;    "hotelID" : "1",&#10;    "roomsToBook" : "3"&#10;}' encoding="UTF-8" mediaType="application/json" />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="62dd101e-3fe5-426f-97f8-8f544596c15c" processor="b39-bmh-db-system:get-by-mobile">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Get by mobile" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="fe359b26-f8da-479e-b415-bf98ffd2590d" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="B39_BMH_DB_System_Config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="#[payload.password]" attributeName="password" />
+					<munit-tools:with-attribute whereValue="#[payload.username]" attributeName="mobile" />
+					<munit-tools:with-attribute whereValue="user" attributeName="target" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="B39-BMH-DB-SYSTEM:INTERNAL_SERVER_ERROR" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref
+				doc:name="Flow-ref to post:\hotels\bookHotel:application\json:b39-book-my-holiday-api-config"
+				doc:id="4600a73a-27de-4d98-a400-e0cd71ca84e6"
+				name="post:\hotels\bookHotel:application\json:b39-book-my-holiday-api-config" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="14859fc5-5fc3-4c2e-85e0-a9ee7b0ddf89" processor="ee:transform" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="internal server error" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="55580cc8-d95c-4d8c-afa0-083430852ffb" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+
+			</munit-tools:verify-call>
+		</munit:validation>
+	
+</munit:test>
+
+
+	<munit:test name="post-hotels\bookHotel-positive-case"
+		doc:id="32681191-5e0e-4dd6-b081-0fe68ddf39e9">
+		<munit:behavior>
+			<munit-tools:mock-when
+				doc:name="Mock Get by mobile"
+				doc:id="3f04b582-6d4c-4d2f-8053-f66683d48f02"
+				processor="b39-bmh-db-system:get-by-mobile">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="fe359b26-f8da-479e-b415-bf98ffd2590d"
+						attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload
+						value="#[output application/json --- readUrl('classpath://posthotelsbookHotelpositivecase\mock_payload.dwl')]"
+						mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:attributes
+						value="#[readUrl('classpath://posthotelsbookHotelpositivecase\mock_attributes.dwl')]" />
+					<munit-tools:variables>
+						<munit-tools:variable key="outboundHeaders"
+							value="#[readUrl('classpath://posthotelsbookHotelpositivecase\mock_variable_.dwl')]" />
+						<munit-tools:variable key="user"
+							value="#[output application/json --- readUrl('classpath://posthotelsbookHotelpositivecase\mock_variable_1.dwl')]"
+							mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when
+				doc:name="Mock Flow Reference"
+				doc:id="8ec20fda-91e7-4193-8c41-9ed50c20efcd" processor="flow-ref">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute
+						whereValue="1982a50e-ce61-4f1f-b8a3-e920308d050e"
+						attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload
+						value="#[output application/json --- readUrl('classpath://posthotelsbookHotelpositivecase\mock_payload1.dwl')]"
+						mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:attributes
+						value="#[readUrl('classpath://posthotelsbookHotelpositivecase\mock_attributes1.dwl')]" />
+					<munit-tools:variables>
+						<munit-tools:variable key="outboundHeaders"
+							value="#[readUrl('classpath://posthotelsbookHotelpositivecase\mock_variable_2.dwl')]" />
+						<munit-tools:variable key="user"
+							value="#[output application/json --- readUrl('classpath://posthotelsbookHotelpositivecase\mock_variable_3.dwl')]"
+							mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input"
+				doc:id="dc8bcbeb-dbbe-4673-877d-a32a40795fc1">
+				<munit:payload
+					value="#[output application/json --- readUrl('classpath://posthotelsbookHotelpositivecase\set-event_payload.dwl')]"
+					encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes
+					value="#[readUrl('classpath://posthotelsbookHotelpositivecase\set-event_attributes.dwl')]" />
+				<munit:variables>
+					<munit:variable key="outboundHeaders"
+						value="#[readUrl('classpath://posthotelsbookHotelpositivecase\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref
+				doc:name="Flow-ref to post:\hotels\bookHotel:application\json:b39-book-my-holiday-api-config"
+				doc:id="b364f517-1a13-46fc-ac7b-c22d560a2c47"
+				name="post:\hotels\bookHotel:application\json:b39-book-my-holiday-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert doc:name="Assert payload"
+				doc:id="9a35a0ce-725a-4eaa-9513-ad6173310b48"
+				message="The payload does not match">
+				<munit-tools:that><![CDATA[#[%dw 2.0
+import posthotelsbookHotelpositivecase::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+</mule>

@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hotels>
+  <hotel>
+    <RoomPrice>8500</RoomPrice>
+    <Pincode>560003</Pincode>
+    <EmptyRooms>122</EmptyRooms>
+    <CityCode>BAN</CityCode>
+    <City>Bangalore</City>
+    <HotelType>5 Star</HotelType>
+    <HotelID>1</HotelID>
+    <State>Karnataka</State>
+    <HotelName>Vivanta by Taj</HotelName>
+  </hotel>
+  <hotel>
+    <RoomPrice>9000</RoomPrice>
+    <Pincode>560003</Pincode>
+    <EmptyRooms>99</EmptyRooms>
+    <CityCode>BAN</CityCode>
+    <City>Bangalore</City>
+    <HotelType>5 Star</HotelType>
+    <HotelID>2</HotelID>
+    <State>Karnataka</State>
+    <HotelName>Sheraton Grand</HotelName>
+  </hotel>
+  <hotel>
+    <RoomPrice>15000</RoomPrice>
+    <Pincode>560003</Pincode>
+    <EmptyRooms>86</EmptyRooms>
+    <CityCode>BAN</CityCode>
+    <City>Bangalore</City>
+    <HotelType>5 Star</HotelType>
+    <HotelID>3</HotelID>
+    <State>Karnataka</State>
+    <HotelName>ITC Windsor Manor</HotelName>
+  </hotel>
+  <hotel>
+    <RoomPrice>7500</RoomPrice>
+    <Pincode>560003</Pincode>
+    <EmptyRooms>12</EmptyRooms>
+    <CityCode>BAN</CityCode>
+    <City>Bangalore</City>
+    <HotelType>5 Star</HotelType>
+    <HotelID>4</HotelID>
+    <State>Karnataka</State>
+    <HotelName>Golden Palms Avenue</HotelName>
+  </hotel>
+  <hotel>
+    <RoomPrice>5000</RoomPrice>
+    <Pincode>560003</Pincode>
+    <EmptyRooms>54</EmptyRooms>
+    <CityCode>BAN</CityCode>
+    <City>Bangalore</City>
+    <HotelType>4 Star</HotelType>
+    <HotelID>5</HotelID>
+    <State>Karnataka</State>
+    <HotelName>Shangri-La</HotelName>
+  </hotel>
+  <hotel>
+    <RoomPrice>4500</RoomPrice>
+    <Pincode>560022</Pincode>
+    <EmptyRooms>5</EmptyRooms>
+    <CityCode>YPR</CityCode>
+    <City>Yeshwanthpur</City>
+    <HotelType>4 Star</HotelType>
+    <HotelID>6</HotelID>
+    <State>Karnataka</State>
+    <HotelName>Movenpick</HotelName>
+  </hotel>
+  <hotel>
+    <RoomPrice>4900</RoomPrice>
+    <Pincode>560022</Pincode>
+    <EmptyRooms>3</EmptyRooms>
+    <CityCode>YPR</CityCode>
+    <City>Yeshwanthpur</City>
+    <HotelType>4 Star</HotelType>
+    <HotelID>7</HotelID>
+    <State>Karnataka</State>
+    <HotelName>Royal Orchids</HotelName>
+  </hotel>
+  <hotel>
+    <RoomPrice>3000</RoomPrice>
+    <Pincode>560022</Pincode>
+    <EmptyRooms>131</EmptyRooms>
+    <CityCode>YPR</CityCode>
+    <City>Yeshwanthpur</City>
+    <HotelType>3 Star</HotelType>
+    <HotelID>8</HotelID>
+    <State>Karnataka</State>
+    <HotelName>IBIS</HotelName>
+  </hotel>
+  <hotel>
+    <RoomPrice>2980</RoomPrice>
+    <Pincode>560022</Pincode>
+    <EmptyRooms>55</EmptyRooms>
+    <CityCode>YPR</CityCode>
+    <City>Yeshwanthpur</City>
+    <HotelType>3 Star</HotelType>
+    <HotelID>9</HotelID>
+    <State>Karnataka</State>
+    <HotelName>Capitol</HotelName>
+  </hotel>
+  <hotel>
+    <RoomPrice>3500</RoomPrice>
+    <Pincode>560022</Pincode>
+    <EmptyRooms>14</EmptyRooms>
+    <CityCode>YPR</CityCode>
+    <City>Yeshwanthpur</City>
+    <HotelType>3 Star</HotelType>
+    <HotelID>10</HotelID>
+    <State>Karnataka</State>
+    <HotelName>Lemon Tree</HotelName>
+  </hotel>
+</hotels>

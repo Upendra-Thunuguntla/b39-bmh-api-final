@@ -1,0 +1,24 @@
+[
+	{
+		"RoomPrice": "8500",
+		"Pincode": "560003",
+		"EmptyRooms": "122",
+		"CityCode": "BAN",
+		"City": "Bangalore",
+		"HotelType": "5 Star",
+		"HotelID": "1",
+		"State": "Karnataka",
+		"HotelName": "Vivanta by Taj"
+	},
+	{
+		"RoomPrice": "9000",
+		"Pincode": "560003",
+		"EmptyRooms": "99",
+		"CityCode": "BAN",
+		"City": "Bangalore",
+		"HotelType": "5 Star",
+		"HotelID": "2",
+		"State": "Karnataka",
+		"HotelName": "Sheraton Grand"
+	}
+]
